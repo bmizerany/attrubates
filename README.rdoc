@@ -1,0 +1,131 @@
+= Atrrubates
+
+  by Blake Mizerany (c) 2008
+  http://github.com/bmizerany/attrubates/tree/master
+
+= Description:
+
+Arrtubates sets meta on meta for objects and adds additional rendering helpers for ActionController::Base in Rails.
+
+= Goal
+
+  * Work with Rails / Merb / Sinatra / Ramaze etc..
+  * low, low, LOC
+  * no need for Rails engines
+  * keep coupling out of the controller auto-magicly (i.e. passing locals)
+  * keep state in models/objects
+
+= Install:
+
+=== General use:
+
+  sudo gem install attrubates
+
+=== Rails (edge):
+
+  ./script/plugin install git://github.com/bmizerany/attrubates.git
+
+=== Rails (not so edgy)
+
+download and extract this in <tt>./vendor/plugins/attrubates</tt>
+
+  http://github.com/bmizerany/sinatra/tarball/master
+
+= Usage
+
+== Attrubate a Class
+
+  class Foo
+    attrubates :meta => [:show, :edit, :hide],
+               :attrs => [:foo, :bar],
+               :defaults => {:foo => :show, :bar => :edit, :self => :show}
+  end
+  
+This will generate these methods on Foo:
+
+  # general
+  attrubate(attr_name, state)
+  attrubated # => { :foo => :show } # shows defaults by default
+  
+  # on foo
+  show_foo?
+  edit_foo?
+  hide_foo?
+  
+  # on bar
+  show_bar?
+  edit_bar?
+  hide_bar?
+  
+  # on self for overall state
+  show_self?
+  edit_self?
+  hide_self?
+  
+  # specific setters
+  show_attrubate(sym)
+  edit_attrubate(sym)
+  hide_attrubate(sym)
+  
+=== Example
+
+  foo = Foo.new
+  foo.show_foo? # => true
+  foo.edit_attrubate(:foo)
+  foo.show_foo? # => false
+  foo.edit_foo? # => true
+  
+== Rails (as a plugin)
+
+  render_attrubate object, attr_name = nil, options = {}
+  
+This renders the associated partial for the object state  
+
+*Options*:
+
+* <tt>:force</tt> ignore the objects contained state and render
+* <tt>:prefix</tt> the path prefix (default is <tt>'shared/attrubates'</tt>)
+* all others are passed to ActionController::Base#render
+
+*Examples of use*:
+
+Overall state
+
+  render_attrubate @foo # => render :partial => 'shared/attrubates/foo/show', :locals => { :foo => @foo }
+
+Attribute specific state
+
+  render_attrubate @foo, :bar # => render :partial => 'shared/attrubates/foo/bar_edit', :locals => { :foo => @foo }
+
+Passed locals
+
+  render_attrubate @foo, :locals => { :baz => some_new_object } 
+                         # => render
+                         :partial => 'shared/attrubates/foo/show',
+                         :locals { :foo => @foo, :baz => some_new_object }
+                         
+All together now
+
+  # app/controllers/foo_controller.rb
+  class FooController < ApplicationController
+    def edit_bar
+      @foo = Foo.find(params[:id])
+      @foo.edit_attrubate(:bar)
+      render :action => :show
+    end
+    
+    ...
+    
+  end
+  
+  # app/views/foo/show.html.erb
+  A bunch of html showing off all my other attribute values
+  <%= render_attrubate @foo, :bar %>
+  
+  # app/views/shared/attrubates/foo/_bar_edit.html.erb
+  <% form_for foo, :url => foo_url(foo), :method => :put do |form| %>
+    <%= form.text_field :baz %>
+    <%= submit_tag %>
+  <% end %>
+  
+= Enjoy!

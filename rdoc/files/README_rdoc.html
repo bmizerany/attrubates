@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README.rdoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README.rdoc</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README.rdoc
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Mar 25 15:14:34 -0700 2008</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>Atrrubates</h1>
+<pre>
+  by Blake Mizerany (c) 2008
+  http://github.com/bmizerany/attrubates/tree/master
+</pre>
+<h1>Description:</h1>
+<p>
+Arrtubates sets meta on meta for objects and adds additional rendering
+helpers for ActionController::Base in Rails.
+</p>
+<h1>Goal</h1>
+<pre>
+  * Work with Rails / Merb / Sinatra / Ramaze etc..
+  * low, low, LOC
+  * no need for Rails engines
+  * keep coupling out of the controller auto-magicly (i.e. passing locals)
+  * keep state in models/objects
+</pre>
+<h1>Install:</h1>
+<h3>General use:</h3>
+<pre>
+  sudo gem install attrubates
+</pre>
+<h3>Rails (edge):</h3>
+<pre>
+  ./script/plugin install git://github.com/bmizerany/attrubates.git
+</pre>
+<h3>Rails (not so edgy)</h3>
+<p>
+download and extract this in <tt>./vendor/plugins/attrubates</tt>
+</p>
+<pre>
+  http://github.com/bmizerany/sinatra/tarball/master
+</pre>
+<h1>Usage</h1>
+<h2>Attrubate a Class</h2>
+<pre>
+  class Foo
+    attrubates :meta =&gt; [:show, :edit, :hide],
+               :attrs =&gt; [:foo, :bar],
+               :defaults =&gt; {:foo =&gt; :show, :bar =&gt; :edit, :self =&gt; :show}
+  end
+</pre>
+<p>
+This will generate these methods on Foo:
+</p>
+<pre>
+  # general
+  attrubate(attr_name, state)
+  attrubated # =&gt; { :foo =&gt; :show } # shows defaults by default
+
+  # on foo
+  show_foo?
+  edit_foo?
+  hide_foo?
+
+  # on bar
+  show_bar?
+  edit_bar?
+  hide_bar?
+
+  # on self for overall state
+  show_self?
+  edit_self?
+  hide_self?
+
+  # specific setters
+  show_attrubate(sym)
+  edit_attrubate(sym)
+  hide_attrubate(sym)
+</pre>
+<h3>Example</h3>
+<pre>
+  foo = Foo.new
+  foo.show_foo? # =&gt; true
+  foo.edit_attrubate(:foo)
+  foo.show_foo? # =&gt; false
+  foo.edit_foo? # =&gt; true
+</pre>
+<h2>Rails (as a plugin)</h2>
+<pre>
+  render_attrubate object, attr_name = nil, options = {}
+</pre>
+<p>
+This renders the associated partial for the object state
+</p>
+<p>
+<b>Options</b>:
+</p>
+<ul>
+<li><tt>:force</tt> ignore the objects contained state and render
+
+</li>
+<li><tt>:prefix</tt> the path prefix (default is
+<tt>&#8216;shared/attrubates&#8216;</tt>)
+
+</li>
+<li>all others are passed to ActionController::Base#render
+
+</li>
+</ul>
+<p>
+*Examples of use*:
+</p>
+<p>
+Overall state
+</p>
+<pre>
+  render_attrubate @foo # =&gt; render :partial =&gt; 'shared/attrubates/foo/show', :locals =&gt; { :foo =&gt; @foo }
+</pre>
+<p>
+Attribute specific state
+</p>
+<pre>
+  render_attrubate @foo, :bar # =&gt; render :partial =&gt; 'shared/attrubates/foo/bar_edit', :locals =&gt; { :foo =&gt; @foo }
+</pre>
+<p>
+Passed locals
+</p>
+<pre>
+  render_attrubate @foo, :locals =&gt; { :baz =&gt; some_new_object }
+                         # =&gt; render
+                         :partial =&gt; 'shared/attrubates/foo/show',
+                         :locals { :foo =&gt; @foo, :baz =&gt; some_new_object }
+</pre>
+<p>
+All together now
+</p>
+<pre>
+  # app/controllers/foo_controller.rb
+  class FooController &lt; ApplicationController
+    def edit_bar
+      @foo = Foo.find(params[:id])
+      @foo.edit_attrubate(:bar)
+      render :action =&gt; :show
+    end
+
+    ...
+
+  end
+
+  # app/views/foo/show.html.erb
+  A bunch of html showing off all my other attribute values
+  &lt;%= render_attrubate @foo, :bar %&gt;
+
+  # app/views/shared/attrubates/foo/_bar_edit.html.erb
+  &lt;% form_for foo, :url =&gt; foo_url(foo), :method =&gt; :put do |form| %&gt;
+    &lt;%= form.text_field :baz %&gt;
+    &lt;%= submit_tag %&gt;
+  &lt;% end %&gt;
+</pre>
+<h1>Enjoy!</h1>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
