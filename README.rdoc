@@ -124,7 +124,7 @@ All together now
   
   # app/views/shared/attrubates/foo/_bar_edit.html.erb
   <% form_for foo, :url => foo_url(foo), :method => :put do |form| %>
-    <%= form.text_field :baz %>
+    <%= form.text_field :bar %>
     <%= submit_tag %>
   <% end %>
   
