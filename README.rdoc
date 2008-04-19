@@ -17,10 +17,6 @@ Arrtubates sets meta on meta for objects and adds additional rendering helpers f
 
 = Install:
 
-=== General use:
-
-  sudo gem install attrubates
-
 === Rails (edge):
 
   ./script/plugin install git://github.com/bmizerany/attrubates.git
@@ -30,6 +26,16 @@ Arrtubates sets meta on meta for objects and adds additional rendering helpers f
 download and extract this in <tt>./vendor/plugins/attrubates</tt>
 
   http://github.com/bmizerany/sinatra/tarball/master
+
+=== Merb
+
+download and extract and include as dependency
+
+  http://github.com/bmizerany/sinatra/tarball/master
+
+=== Sinatra
+
+download and require in your app
 
 = Usage
 
