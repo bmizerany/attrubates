@@ -1,5 +1,8 @@
 = Atrrubates
 
+  @jcrosby is now the official maintainer.
+  Please direct all questions/pull-requests to him.
+
   by Blake Mizerany (c) 2008
   http://github.com/bmizerany/attrubates/tree/master
 
